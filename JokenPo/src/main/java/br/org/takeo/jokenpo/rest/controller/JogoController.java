@@ -22,7 +22,7 @@ import br.org.takeo.jokenpo.rest.service.JogoService;
 
 @RestController
 @RequestMapping("/api")
-public class JogadoresController {
+public class JogoController {
 
 	private JogoService jogoService = new JogoService();
 	
@@ -92,8 +92,11 @@ public class JogadoresController {
 	}
 	
 	@GetMapping("/jogar")
-	public List<PlayerDTO> jogar (){
-		return jogoService.jogar();
+	public ResponseDTO jogar (){
+		ResponseDTO dto = new ResponseDTO();
+		dto.getListObjects().add(jogoService.jogar());
+		return dto;
+		
 	}
 
 }

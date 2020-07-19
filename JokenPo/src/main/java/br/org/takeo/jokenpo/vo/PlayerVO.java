@@ -2,18 +2,20 @@ package br.org.takeo.jokenpo.vo;
 
 import br.org.takeo.jokenpo.dto.PlayerDTO;
 import br.org.takeo.jokenpo.enums.TipoJogadaEnum;
+import br.org.takeo.jokenpo.enums.TipoStatusPlayerEnum;
 
 public class PlayerVO{
 	private int codigo;
 	private String nome;
-	private boolean vencedor;
 	private TipoJogadaEnum jogada;
+	private TipoStatusPlayerEnum status;
 	
 	public PlayerVO() {}
 	
-	public PlayerVO(int codigo, PlayerDTO player) {
+	public PlayerVO(int codigo, PlayerDTO player, TipoStatusPlayerEnum status) {
 		this.codigo = codigo;
 		this.nome = player.getNome();
+		this.status = status;
 	}
 
 	public int getCodigo() {
@@ -27,12 +29,6 @@ public class PlayerVO{
 	}
 	public void setNome(String nome) {
 		this.nome = nome;
-	}
-	public boolean isVencedor() {
-		return vencedor;
-	}
-	public void setVencedor(boolean vencedor) {
-		this.vencedor = vencedor;
 	}
 	public TipoJogadaEnum getJogada() {
 		return jogada;
@@ -61,6 +57,14 @@ public class PlayerVO{
 		if (codigo != other.codigo)
 			return false;
 		return true;
+	}
+
+	public TipoStatusPlayerEnum getStatus() {
+		return status;
+	}
+
+	public void setStatus(TipoStatusPlayerEnum status) {
+		this.status = status;
 	}
 	
 }

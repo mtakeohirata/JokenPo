@@ -2,6 +2,7 @@ package br.org.takeo.jokenpo.rest.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.web.server.ResponseStatusException;
 import br.org.takeo.jokenpo.dto.JogadaDTO;
 import br.org.takeo.jokenpo.dto.PlayerDTO;
 import br.org.takeo.jokenpo.enums.TipoJogadaEnum;
+import br.org.takeo.jokenpo.enums.TipoStatusPlayerEnum;
 import br.org.takeo.jokenpo.utils.IntegerUtils;
 import br.org.takeo.jokenpo.vo.PlayerVO;
 
@@ -19,12 +21,16 @@ public class JogoService {
 	private List<PlayerVO> players = new ArrayList<PlayerVO>();
 
 	public PlayerVO salvaPlayer(PlayerDTO player){
+		if (players.size() >= 2) {
+			throw new ResponseStatusException(HttpStatus.OK, "Não é possível jogar com mais de 2 players. Nova versão já em desenvolvimento!");
+		} 
+		
 		int codigo = 0;
 		if (!this.players.isEmpty()) {
 			codigo = geraCodigoPlayer();
 		}
 		
-		PlayerVO playerAdicionadoVO = new PlayerVO(codigo, player);
+		PlayerVO playerAdicionadoVO = new PlayerVO(codigo, player, TipoStatusPlayerEnum.AGUARDANDO);
 		this.players.add(playerAdicionadoVO);
 		
 		return playerAdicionadoVO;
@@ -101,12 +107,46 @@ public class JogoService {
 		return playerVO;
 	}
 	
-	public List<PlayerDTO> jogar(){
-		List<PlayerDTO> playersVencedores = new ArrayList<PlayerDTO>();
+	public List<PlayerVO> jogar(){
+		
+		if (players.size() < 2) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "É necessário dois players para jogar");
+		} 
+		
+		Optional<PlayerVO> findFirst = players.stream()
+		.filter(p -> p.getJogada() == null)
+		.findFirst();
+		
+		if (findFirst.isPresent()) {
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Certifique-se de que todos os players fizeram sua jogada");
+		}
 		
 		//Implementar RN de jogo
+		verificarJogada();
 		
-		return playersVencedores;
+		return players;
+	}
+	
+	private void verificarJogada() {
+		for (PlayerVO player1 : players) {
+			for (PlayerVO player2 : players) {
+				if (!player1.equals(player2) ) {
+					if (player1.getJogada().ganha(player2.getJogada())) {
+						player1.setStatus(TipoStatusPlayerEnum.VENCEU);
+						player2.setStatus(TipoStatusPlayerEnum.PERDEU);
+					} else if (player1.getJogada().perde(player2.getJogada())) {
+						player2.setStatus(TipoStatusPlayerEnum.VENCEU);
+						player1.setStatus(TipoStatusPlayerEnum.PERDEU);
+					} else {
+						player2.setStatus(TipoStatusPlayerEnum.EMPATOU);
+						player1.setStatus(TipoStatusPlayerEnum.EMPATOU);
+					}
+				}
+			}
+		}
+		
+		
+		
 	}
 	
 }

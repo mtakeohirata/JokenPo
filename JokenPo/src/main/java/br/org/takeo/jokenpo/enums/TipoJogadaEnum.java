@@ -1,16 +1,65 @@
 package br.org.takeo.jokenpo.enums;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.stream.Stream;
 
 public enum TipoJogadaEnum {
 	
-	PEDRA 	(1, "PEDRA"),
-	PAPEL 	(2, "PAPEL"),
-	TESOURA (3, "Tesoura"),
-	LAGARTO (4, "Lagarto"),
-	SPOCK	(5, "Spock");
+	PEDRA 	(1, "PEDRA"){
+		@Override
+		public boolean ganha(TipoJogadaEnum jogada) {
+			return jogada == TipoJogadaEnum.LAGARTO || jogada == TipoJogadaEnum.TESOURA;
+		}
+
+		@Override
+		public boolean perde(TipoJogadaEnum jogada) {
+			return jogada == TipoJogadaEnum.SPOCK || jogada == TipoJogadaEnum.PAPEL;
+		}
+	},
+	PAPEL 	(2, "PAPEL"){
+		@Override
+		public boolean ganha(TipoJogadaEnum jogada) {
+			return jogada == TipoJogadaEnum.PEDRA || jogada == TipoJogadaEnum.SPOCK;
+		}
+
+		@Override
+		public boolean perde(TipoJogadaEnum jogada) {
+			return jogada == TipoJogadaEnum.TESOURA || jogada == TipoJogadaEnum.LAGARTO;
+		}
+	},
+	TESOURA (3, "Tesoura"){
+		@Override
+		public boolean ganha(TipoJogadaEnum jogada) {
+			return jogada == TipoJogadaEnum.LAGARTO || jogada == TipoJogadaEnum.PAPEL;
+		}
+
+		@Override
+		public boolean perde(TipoJogadaEnum jogada) {
+			return jogada == TipoJogadaEnum.SPOCK || jogada == TipoJogadaEnum.PEDRA;
+		}
+
+	},
+	LAGARTO (4, "Lagarto"){
+		@Override
+		public boolean ganha(TipoJogadaEnum jogada) {
+			return jogada == TipoJogadaEnum.SPOCK || jogada == TipoJogadaEnum.PAPEL;
+		}
+
+		@Override
+		public boolean perde(TipoJogadaEnum jogada) {
+			return jogada == TipoJogadaEnum.TESOURA || jogada == TipoJogadaEnum.PEDRA;
+		}
+	},
+	SPOCK	(5, "Spock"){
+		@Override
+		public boolean ganha(TipoJogadaEnum jogada) {
+			return jogada == TipoJogadaEnum.TESOURA || jogada == TipoJogadaEnum.PEDRA;
+		}
+
+		@Override
+		public boolean perde(TipoJogadaEnum jogada) {
+			return jogada == TipoJogadaEnum.LAGARTO || jogada == TipoJogadaEnum.PAPEL;
+		}
+	};
 	
 
 	private int codigo;
@@ -44,17 +93,9 @@ public enum TipoJogadaEnum {
 				.get();
 	}
 	
-	public static List<TipoJogadaEnum> obtemJogadaVencedora(List<TipoJogadaEnum> listJogadas){
-		List<TipoJogadaEnum> listGanhadora = new ArrayList<TipoJogadaEnum>();
-		
-		for (TipoJogadaEnum jogada : listJogadas) {
-			for (TipoJogadaEnum tipoJogadaEnum : TipoJogadaEnum.values()) {
-				
-			}
-		}
-		
-		return listGanhadora;
-	}
+	public abstract boolean ganha(TipoJogadaEnum jogada);
+
+	public abstract boolean perde(TipoJogadaEnum jogada);
 	
 	
 }
